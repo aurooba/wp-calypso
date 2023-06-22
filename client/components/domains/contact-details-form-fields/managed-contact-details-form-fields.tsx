@@ -176,7 +176,14 @@ export class ManagedContactDetailsFormFields extends Component<
 		this.updateParentState( updatedParentState );
 	};
 
-	getFieldProps = ( name: string, { customErrorMessage = null } ): FieldProps => {
+	getFieldProps = (
+		name: string,
+		{
+			customErrorMessage,
+		}: {
+			customErrorMessage?: DomainContactDetailsErrors[ 'firstName' ];
+		}
+	): FieldProps => {
 		const { eventFormName, getIsFieldDisabled } = this.props;
 		const camelName = camelCase( name );
 
