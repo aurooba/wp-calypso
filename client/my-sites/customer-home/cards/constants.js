@@ -51,5 +51,4 @@ export const LAUNCHPAD_INTENT_BUILD = 'home-launchpad-intent-build';
 export const LAUNCHPAD_INTENT_WRITE = 'home-launchpad-intent-write';
 export const LAUNCHPAD_INTENT_FREE_NEWSLETTER = 'home-launchpad-intent-free-newsletter';
 export const LAUNCHPAD_INTENT_PAID_NEWSLETTER = 'home-launchpad-intent-paid-newsletter';
-export const NOTICE_OFFER_COUPON = 'home-offer-coupon';
 export const NOTICE_SPECIAL_20_COUPON = 'home-special-20-coupon';
