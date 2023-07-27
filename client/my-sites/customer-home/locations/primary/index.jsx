@@ -48,7 +48,7 @@ import EarnFeatures from 'calypso/my-sites/customer-home/cards/tasks/earn-featur
 import Fiverr from 'calypso/my-sites/customer-home/cards/tasks/fiverr';
 import GoMobile from 'calypso/my-sites/customer-home/cards/tasks/go-mobile';
 import Marketplace from 'calypso/my-sites/customer-home/cards/tasks/marketplace';
-import NoticeSpecial20Coupon from 'calypso/my-sites/customer-home/cards/tasks/notice-offer-coupon';
+import NoticeSpecial20Coupon from 'calypso/my-sites/customer-home/cards/tasks/notice-special-20-coupon';
 import PromotePost from 'calypso/my-sites/customer-home/cards/tasks/promote-post';
 import Renew from 'calypso/my-sites/customer-home/cards/tasks/renew';
 import { ReviveAutoRevertedAtomic } from 'calypso/my-sites/customer-home/cards/tasks/revive-auto-reverted-atomic';
