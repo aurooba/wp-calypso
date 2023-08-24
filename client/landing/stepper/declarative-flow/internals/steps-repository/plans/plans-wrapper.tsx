@@ -6,6 +6,7 @@ import {
 	isLinkInBioFlow,
 	isNewsletterFlow,
 	NEWSLETTER_FLOW,
+	PODCAST_FLOW,
 	LINK_IN_BIO_FLOW,
 	NEW_HOSTED_SITE_FLOW,
 	isNewHostedSiteCreationFlow,
@@ -49,6 +50,8 @@ function getPlansIntent( flowName: string | null ): PlansIntent | null {
 		case DESIGN_FIRST_FLOW:
 			return 'plans-blog-onboarding';
 		case NEWSLETTER_FLOW:
+			return 'plans-newsletter';
+		case PODCAST_FLOW:
 			return 'plans-newsletter';
 		case LINK_IN_BIO_FLOW:
 			return 'plans-link-in-bio';
