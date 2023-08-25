@@ -1,8 +1,10 @@
 import { Button, Card, Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Notice from 'calypso/components/notice';
 import SectionHeader from 'calypso/components/section-header';
 import { isWebAuthnSupported } from 'calypso/lib/webauthn';
@@ -112,7 +114,24 @@ class Security2faKey extends Component {
 				{ ! addingKey && ! security2faKeys.length && (
 					<Card>
 						{ isBrowserSupported && (
-							<p>{ this.props.translate( 'Use a second factor security key to sign in.' ) }</p>
+							<p>
+								{ this.props.translate(
+									"Use a second factor security key ({{link}}what's that?{{/link}}) to protect your account.",
+									{
+										components: {
+											link: (
+												<InlineSupportLink
+													showIcon={ false }
+													supportPostId={ 0 } // @TODO correct ID
+													supportLink={ localizeUrl(
+														'https://wordpress.com/support/security/two-step-authentication/#security-key-authentication'
+													) }
+												/>
+											),
+										},
+									}
+								) }
+							</p>
 						) }
 						{ ! isBrowserSupported && (
 							<p>
