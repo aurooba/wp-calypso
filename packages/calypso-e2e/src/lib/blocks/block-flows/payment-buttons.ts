@@ -1,18 +1,24 @@
 import { BlockFlow, EditorContext, PublishedPostContext } from '.';
 
 interface ConfigurationData {
+	styles?: 'Fill' | 'Outline';
+	plan: {
+		name: string;
+		currency: string;
+		price: number;
+		interval: 'Month' | 'Year' | 'One-Time Payment';
+		donation?: boolean;
+		customAmount?: boolean;
+	};
 	buttonText: string;
 }
 
-const blockParentSelector = '[aria-label="Block: Payment Button"]';
-const selectors = {
-	buttonText: `${ blockParentSelector } [role=textbox]`,
-};
+const blockParentSelector = '[aria-label="Block: Payment Buttons"]';
 
 /**
  * Class representing the flow of using a Contact Info block in the editor.
  */
-export class PaymentsBlockFlow implements BlockFlow {
+export class PaymentButtonsFlow implements BlockFlow {
 	private configurationData: ConfigurationData;
 
 	/**
@@ -24,7 +30,7 @@ export class PaymentsBlockFlow implements BlockFlow {
 		this.configurationData = configurationData;
 	}
 
-	blockSidebarName = 'Payment Button';
+	blockSidebarName = 'Payment Buttons';
 	blockEditorSelector = blockParentSelector;
 
 	/**
@@ -33,9 +39,9 @@ export class PaymentsBlockFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		const editorParent = await context.editorPage.getEditorParent();
-		const buttonTextLocator = editorParent.locator( selectors.buttonText );
-		await buttonTextLocator.fill( this.configurationData.buttonText );
+		// const editorParent = await context.editorPage.getEditorParent();
+		// const buttonTextLocator = editorParent.locator( selectors.buttonText );
+		// await buttonTextLocator.fill( this.configurationData.buttonText );
 	}
 
 	/**

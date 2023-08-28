@@ -11,7 +11,7 @@ export * from './post-carousel';
 export * from './timeline';
 export * from './paid-content';
 export * from './subscribe';
-export * from './payments';
+export * from './payment-buttons';
 export * from './contact-info';
 export * from './star-rating';
 export * from './slideshow';
