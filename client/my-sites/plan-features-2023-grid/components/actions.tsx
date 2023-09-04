@@ -10,10 +10,12 @@ import {
 	type PlanSlug,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import { WpcomPlansUI } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
+import { useSelect } from '@wordpress/data';
 import classNames from 'classnames';
 import i18n, { localize, TranslateResult, useTranslate } from 'i18n-calypso';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
@@ -183,6 +185,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	currentSitePlanSlug,
 	buttonText,
 	planActionOverrides,
+	selectedSiteSlug,
 }: {
 	freePlan: boolean;
 	availableForPurchase?: boolean;
@@ -192,7 +195,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	isLargeCurrency: boolean;
 	planTitle: TranslateResult;
 	handleUpgradeButtonClick: () => void;
-	planSlug: string;
+	planSlug: PlanSlug;
 	manageHref?: string;
 	canUserPurchasePlan?: boolean | null;
 	currentSitePlanSlug?: string | null;
@@ -203,10 +206,21 @@ const LoggedInPlansFeatureActionButton = ( {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const translate = useTranslate();
 	const { gridPlansIndex } = usePlansGridContext();
-	const { current } = gridPlansIndex[ planSlug ];
+	const { current, storageAddOnsForPlan } = gridPlansIndex[ planSlug ];
 	const currentPlanBillPeriod = useSelector( ( state ) => {
 		return currentSitePlanSlug ? getPlanBillPeriod( state, currentSitePlanSlug ) : null;
 	} );
+	const selectedStorageOptionForPlan = useSelect(
+		( select ) => {
+			return select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug );
+		},
+		[ planSlug ]
+	);
+
+	const selectedStorageAddOn = storageAddOnsForPlan?.find( ( addOn ) => {
+		return addOn?.featureSlugs?.includes( selectedStorageOptionForPlan || '' );
+	} );
+
 	const gridPlanBillPeriod = useSelector( ( state ) => {
 		return planSlug ? getPlanBillPeriod( state, planSlug ) : null;
 	} );
@@ -232,6 +246,24 @@ const LoggedInPlansFeatureActionButton = ( {
 	}
 
 	if ( current && planSlug !== PLAN_P2_FREE ) {
+		if ( selectedStorageAddOn ) {
+			return (
+				<Button
+					className={ classNames( classes ) }
+					href={ manageHref }
+					disabled={ ! manageHref }
+					onClick={ () => {
+						window.location.assign(
+							`/checkout/${ selectedSiteSlug }/${ selectedStorageAddOn?.productSlug }:-q-${ selectedStorageAddOn?.quantity }`
+						);
+					} }
+					primary
+				>
+					{ translate( 'Upgrade' ) }
+				</Button>
+			);
+		}
+
 		return (
 			<Button className={ classes } href={ manageHref } disabled={ ! manageHref }>
 				{ canUserPurchasePlan ? translate( 'Manage plan' ) : translate( 'View plan' ) }

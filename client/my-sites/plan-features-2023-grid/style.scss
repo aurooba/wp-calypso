@@ -111,6 +111,12 @@ $mobile-card-max-width: 440px;
 				color: var(--studio-gray-100);
 				box-shadow: inset 0 0 0 1px var(--studio-gray-10);
 
+				&.is-primary {
+					background-color: var(--color-accent);
+					border-color: var(--color-accent);
+					color: var(--color-text-inverted);
+				}
+
 				&:hover {
 					box-shadow: inset 0 0 0 1px var(--studio-gray-80);
 				}
@@ -456,14 +462,26 @@ $mobile-card-max-width: 440px;
 				}
 
 				&.plan-features-2023-grid__header-billing-info {
-					padding-bottom: 32px;
+					padding-bottom: 16px;
 					@include plans-2023-break-small {
-						padding-bottom: 32px;
+						padding-bottom: 16px;
 					}
 				}
 
 				&.popular-plan-parent-class .plan-features-2023-grid__popular-badge {
 					padding-bottom: 23px;
+				}
+
+				&.plan-features-2023-grid__storage {
+					padding-top: 0;
+
+					.components-custom-select-control {
+						width: 200px;
+
+						.components-custom-select-control__button {
+							height: 40px;
+						}
+					}
 				}
 
 				.plan-features-2023-grid__header-title {
