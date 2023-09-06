@@ -309,7 +309,6 @@ type PlanComparisonGridProps = {
 	planTypeSelectorProps: PlanTypeSelectorProps;
 	isInSignup: boolean;
 	isLaunchPage?: boolean | null;
-	isPlansInsideStepper?: boolean;
 	flowName?: string | null;
 	currentSitePlanSlug?: string | null;
 	manageHref: string;
@@ -704,7 +703,6 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	visibleGridPlans,
 	planFeatureFootnotes,
 	isInSignup,
-	isPlansInsideStepper,
 	isStorageFeature,
 	flowName,
 	isHighlighted,
@@ -772,7 +770,6 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 					visibleGridPlans={ visibleGridPlans }
 					planSlug={ planSlug }
 					isInSignup={ isInSignup }
-					isPlansInsideStepper={ isPlansInsideStepper }
 					isStorageFeature={ isStorageFeature }
 					flowName={ flowName }
 					intervalType={ intervalType }
@@ -790,7 +787,6 @@ export const PlanComparisonGrid = ( {
 	planTypeSelectorProps,
 	isInSignup,
 	isLaunchPage,
-	isPlansInsideStepper,
 	flowName,
 	currentSitePlanSlug,
 	manageHref,
@@ -1015,7 +1011,6 @@ export const PlanComparisonGrid = ( {
 									visibleGridPlans={ visibleGridPlans }
 									planFeatureFootnotes={ planFeatureFootnotes }
 									isInSignup={ isInSignup }
-									isPlansInsideStepper={ isPlansInsideStepper }
 									isStorageFeature={ false }
 									flowName={ flowName }
 									isHighlighted={ feature.getSlug() === selectedFeature }
@@ -1033,7 +1028,6 @@ export const PlanComparisonGrid = ( {
 									visibleGridPlans={ visibleGridPlans }
 									planFeatureFootnotes={ planFeatureFootnotes }
 									isInSignup={ isInSignup }
-									isPlansInsideStepper={ isPlansInsideStepper }
 									isStorageFeature={ true }
 									flowName={ flowName }
 									isHighlighted={ false }

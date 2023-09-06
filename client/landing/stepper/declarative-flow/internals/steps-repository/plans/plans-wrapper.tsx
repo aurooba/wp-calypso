@@ -75,8 +75,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	}, [] );
 	const { flowName } = props;
 
-	const { setPlanCartItem, setDomain, setDomainCartItem, setProductCartItems } =
-		useDispatch( ONBOARD_STORE );
+	const { setPlanCartItem, setDomain, setDomainCartItem } = useDispatch( ONBOARD_STORE );
 
 	const site = useSite();
 	const { __ } = useI18n();
@@ -93,7 +92,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		? reduxHideFreePlan && 'plans-blog-onboarding' === plansIntent
 		: reduxHideFreePlan;
 
-	const onSelectPlan = ( selectedPlan: any, storageAddOn?: MinimalRequestCartProduct | null ) => {
+	const onSelectPlan = ( selectedPlan: any ) => {
 		if ( selectedPlan ) {
 			recordTracksEvent( 'calypso_signup_plan_select', {
 				product_slug: selectedPlan?.product_slug,
@@ -107,11 +106,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		}
 
 		setPlanCartItem( selectedPlan );
-
-		if ( storageAddOn ) {
-			setProductCartItems( [ storageAddOn ] );
-		}
-
 		props.onSubmit?.( selectedPlan );
 	};
 

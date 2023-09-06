@@ -291,7 +291,7 @@ const PlansFeaturesMain = ( {
 		setIsFreePlanPaidDomainDialogOpen( ! isFreePlanPaidDomainDialogOpen );
 	};
 
-	const handleUpgradeClick = async ( cartItemForPlan?: { product_slug: string } | null ) => {
+	const handleUpgradeClick = ( cartItemForPlan?: { product_slug: string } | null ) => {
 		// `cartItemForPlan` is empty if Free plan is selected. Show `FreePlanPaidDomainDialog`
 		// in that case and exit. `FreePlanPaidDomainDialog` takes over from there.
 		// It only applies to main onboarding flow and the paid media flow at the moment.
@@ -328,7 +328,7 @@ const PlansFeaturesMain = ( {
 		const planPath = cartItemForPlan?.product_slug
 			? getPlanPath( cartItemForPlan.product_slug )
 			: '';
-		const checkoutUrlWithArgs = `/checkout/${ siteSlug }/${ planPath },${ storageAddOn?.productSlug }:-q-${ storageAddOn?.quantity }`;
+		const checkoutUrlWithArgs = `/checkout/${ siteSlug }/${ planPath }`;
 
 		page( checkoutUrlWithArgs );
 	};
