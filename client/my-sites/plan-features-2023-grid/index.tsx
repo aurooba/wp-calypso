@@ -73,7 +73,6 @@ export interface PlanFeatures2023GridProps {
 	isInSignup: boolean;
 	siteId?: number | null;
 	isLaunchPage?: boolean | null;
-	isPlansInsideStepper?: boolean;
 	isReskinned?: boolean;
 	onUpgradeClick?: ( cartItem?: MinimalRequestCartProduct | null ) => void;
 	flowName?: string | null;
@@ -708,7 +707,6 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			planTypeSelectorProps,
 			intervalType,
 			isLaunchPage,
-			isPlansInsideStepper,
 			flowName,
 			currentSitePlanSlug,
 			manageHref,
@@ -788,7 +786,6 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 								planTypeSelectorProps={ planTypeSelectorProps }
 								intervalType={ intervalType }
 								isInSignup={ isInSignup }
-								isPlansInsideStepper={ isPlansInsideStepper }
 								isLaunchPage={ isLaunchPage }
 								flowName={ flowName }
 								currentSitePlanSlug={ currentSitePlanSlug }

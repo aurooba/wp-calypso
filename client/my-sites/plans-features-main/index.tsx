@@ -688,7 +688,6 @@ const PlansFeaturesMain = ( {
 							isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 							isInSignup={ isInSignup }
 							isLaunchPage={ isLaunchPage }
-							isPlansInsideStepper={ isPlansInsideStepper }
 							onUpgradeClick={ handleUpgradeClick }
 							flowName={ flowName }
 							selectedFeature={ selectedFeature }
