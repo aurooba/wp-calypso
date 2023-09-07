@@ -239,7 +239,6 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 					{ this.renderPlanPrice( [ gridPlanForSpotlight ] ) }
 					{ this.renderBillingTimeframe( [ gridPlanForSpotlight ] ) }
 					{ this.renderTopButtons( [ gridPlanForSpotlight ] ) }
-					{ this.renderPlanStorageOptions( [ gridPlanForSpotlight ] ) }
 				</div>
 			</div>
 		);
