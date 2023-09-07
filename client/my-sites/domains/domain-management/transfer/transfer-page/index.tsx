@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import ActionCard from 'calypso/components/action-card';
 import CardHeading from 'calypso/components/card-heading';
 import QueryDomainInfo from 'calypso/components/data/query-domain-info';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import Main from 'calypso/components/main';
@@ -23,6 +24,7 @@ import AftermarketAutcionNotice from 'calypso/my-sites/domains/domain-management
 import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
 import NonTransferrableDomainNotice from 'calypso/my-sites/domains/domain-management/components/domain/non-transferrable-domain-notice';
 import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
+import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
 import SelectIpsTag from 'calypso/my-sites/domains/domain-management/transfer/transfer-out/select-ips-tag';
 import {
 	domainManagementEdit,
@@ -32,6 +34,7 @@ import {
 	isUnderDomainManagementAll,
 } from 'calypso/my-sites/domains/paths';
 import { useDispatch } from 'calypso/state';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
 	getDomainLockError,
 	getDomainTransferCodeError,
@@ -40,6 +43,11 @@ import {
 import { updateDomainLock } from 'calypso/state/domains/transfer/actions';
 import { getDomainWapiInfoByDomainName } from 'calypso/state/domains/transfer/selectors';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import {
+	getByPurchaseId,
+	hasLoadedSitePurchasesFromServer,
+	isFetchingSitePurchases,
+} from 'calypso/state/purchases/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isPrimaryDomainBySiteId from 'calypso/state/selectors/is-primary-domain-by-site-id';
@@ -49,7 +57,6 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import TransferUnavailableNotice from '../transfer-unavailable-notice';
 import type { TransferPageProps } from './types';
 import type { AppState } from 'calypso/types';
-
 import './style.scss';
 
 // The types for ToggleControl are missing `disabled`, but it is listed in the
@@ -70,15 +77,32 @@ const TransferPage = ( props: TransferPageProps ) => {
 		isDomainInfoLoading,
 		isDomainLocked,
 		isDomainOnly,
+		isLoadingPurchase,
 		isMapping,
 		isSupportSession,
+		purchase,
 		selectedDomainName,
 		selectedSite,
 	} = props;
 	const { __ } = useI18n();
 	const [ isRequestingTransferCode, setIsRequestingTransferCode ] = useState( false );
 	const [ isLockingOrUnlockingDomain, setIsLockingOrUnlockingDomain ] = useState( false );
+	const [ showUpsellDiscount, setShowUpsellDiscount ] = useState( false );
 	const domain = getSelectedDomain( props );
+	const canUsePreventTransferPromo =
+		domain?.availablePromos?.length && domain?.availablePromos?.length > 0;
+
+	const updateLastTransferOutIntent = async () => {
+		try {
+			await wpcom.req.post(
+				`/me/domains/${ selectedDomainName }/update-last-transfer-out-intent/`,
+				{}
+			);
+			setShowUpsellDiscount( true );
+		} catch {
+			// Nothing needs to be done here. If the request fails, the user will not see the upsell banner.
+		}
+	};
 
 	const renderHeader = () => {
 		const items = [
@@ -178,6 +202,7 @@ const TransferPage = ( props: TransferPageProps ) => {
 	const toggleDomainLock = async () => {
 		setIsLockingOrUnlockingDomain( true );
 		const lock = ! isDomainLocked;
+		setShowUpsellDiscount( ! lock );
 
 		try {
 			await wpcom.req.post( `/domains/${ selectedDomainName }/transfer/`, {
@@ -193,6 +218,10 @@ const TransferPage = ( props: TransferPageProps ) => {
 					getNoticeOptions( selectedDomainName )
 				)
 			);
+
+			if ( canUsePreventTransferPromo && isDomainLocked ) {
+				updateLastTransferOutIntent();
+			}
 		} catch {
 			dispatch( errorNotice( getDomainLockError( lock ), getNoticeOptions( selectedDomainName ) ) );
 		} finally {
@@ -219,6 +248,9 @@ const TransferPage = ( props: TransferPageProps ) => {
 					getNoticeOptions( selectedDomainName )
 				)
 			);
+			if ( canUsePreventTransferPromo ) {
+				updateLastTransferOutIntent();
+			}
 		} catch ( error ) {
 			dispatch(
 				errorNotice(
@@ -284,6 +316,22 @@ const TransferPage = ( props: TransferPageProps ) => {
 		);
 	};
 
+	const renderUpsellDiscount = () => {
+		return (
+			<div className="transfer-page__upsell-discount">
+				<p>TBD Upsell messagge</p>
+				<RenewButton
+					purchase={ purchase }
+					selectedSite={ selectedSite }
+					subscriptionId={ parseInt( domain?.subscriptionId ?? '', 10 ) }
+					tracksProps={ { source: 'test-registered-domain-transfer-out' } }
+					customLabel={ __( 'Renew' ) }
+					disabled={ isLoadingPurchase }
+				/>
+			</div>
+		);
+	};
+
 	const renderTransferMessage = () => {
 		const registrationDatePlus60Days = moment.utc( domain?.registrationDate ).add( 60, 'days' );
 		const supportLink = moment.utc().isAfter( registrationDatePlus60Days )
@@ -324,6 +372,7 @@ const TransferPage = ( props: TransferPageProps ) => {
 				<Button primary={ false } busy={ isRequestingTransferCode } onClick={ requestTransferCode }>
 					{ __( 'Get authorization code' ) }
 				</Button>
+				{ showUpsellDiscount && renderUpsellDiscount() }
 			</>
 		);
 	};
@@ -383,6 +432,7 @@ const TransferPage = ( props: TransferPageProps ) => {
 	return (
 		<Main className="transfer-page" wideLayout>
 			<QueryDomainInfo domainName={ selectedDomainName } />
+			{ selectedSite?.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite?.ID } /> }
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 			{ renderHeader() }
 			<Layout>
@@ -413,15 +463,21 @@ const transferPageComponent = connect( ( state: AppState, ownProps: TransferPage
 	const domain = getSelectedDomain( ownProps );
 	const siteId = getSelectedSiteId( state );
 	const domainInfo = getDomainWapiInfoByDomainName( state, ownProps.selectedDomainName );
+	const currentUserId = getCurrentUserId( state );
+	const subscriptionId = domain && domain.subscriptionId;
+	const purchase = subscriptionId ? getByPurchaseId( state, parseInt( subscriptionId, 10 ) ) : null;
 	return {
 		currentRoute: getCurrentRoute( state ),
 		isAtomic: isSiteAutomatedTransfer( state, siteId ) ?? false,
 		isDomainInfoLoading: ! domainInfo.hasLoadedFromServer,
 		isDomainLocked: domainInfo.data?.locked,
 		isDomainOnly: isDomainOnlySite( state, siteId ) ?? false,
+		isLoadingPurchase:
+			isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
 		isMapping: Boolean( domain ) && isMappedDomain( domain ),
 		isPrimaryDomain: isPrimaryDomainBySiteId( state, siteId, ownProps.selectedDomainName ),
 		isSupportSession: isSupportSession( state ),
+		purchase: purchase && purchase.userId === currentUserId ? purchase : null,
 	};
 } )( TransferPage );
 
