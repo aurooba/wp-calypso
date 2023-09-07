@@ -8,6 +8,7 @@ import { ECOMMERCE_FLOW, ecommerceFlowRecurTypes } from '@automattic/onboarding'
 import { QueryClientProvider } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
 import defaultCalypsoI18n from 'i18n-calypso';
+import { useEffect } from 'react';
 import ReactDom from 'react-dom';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
@@ -58,20 +59,26 @@ const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined; flow: Flo
 } ) => {
 	const { receiveCurrentUser } = useDispatch( USER_STORE );
 	const { setEcommerceFlowRecurType } = useDispatch( ONBOARD_STORE );
+	const recurType = useQuery().get( 'recur' ) ?? '';
 
-	const recurType = useQuery().get( 'recur' );
+	useEffect( () => {
+		if ( flow.name !== ECOMMERCE_FLOW ) {
+			return;
+		}
 
-	if ( flow.name === ECOMMERCE_FLOW ) {
-		const isValidRecurType =
-			recurType && Object.values( ecommerceFlowRecurTypes ).includes( recurType );
+		const isValidRecurType = Object.values( ecommerceFlowRecurTypes ).includes( recurType );
 		if ( isValidRecurType ) {
 			setEcommerceFlowRecurType( recurType );
 		} else {
 			setEcommerceFlowRecurType( ecommerceFlowRecurTypes.YEARLY );
 		}
-	}
+	}, [ flow.name, recurType ] );
 
-	user && receiveCurrentUser( user as UserStore.CurrentUser );
+	useEffect( () => {
+		if ( user ) {
+			receiveCurrentUser( user );
+		}
+	}, [ user ] );
 
 	return <FlowRenderer flow={ flow } />;
 };
