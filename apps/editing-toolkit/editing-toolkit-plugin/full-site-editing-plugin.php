@@ -44,6 +44,8 @@ namespace A8C\FSE;
  */
 define( 'A8C_ETK_PLUGIN_VERSION', 'dev' );
 
+// test comment, revert me.
+
 // Always include these helper files for dotcom FSE.
 require_once __DIR__ . '/dotcom-fse/helpers.php';
 
