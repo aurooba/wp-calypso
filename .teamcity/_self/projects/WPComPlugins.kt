@@ -69,6 +69,11 @@ object CalypsoApps: BuildType({
 	name = "CalypsoApps"
 	description = "Test description"
 
+	// Incremented to 4 to make sure ETK updates continue to work:
+	buildParams = {
+		param("build.prefix", "4")
+	}
+
 	vcs {
 		root(Settings.WpCalypso)
 		cleanCheckout = true
