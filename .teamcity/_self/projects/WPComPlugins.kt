@@ -70,7 +70,7 @@ object CalypsoApps: BuildType({
 	description = "Test description"
 
 	// Incremented to 4 to make sure ETK updates continue to work:
-	buildParams = {
+	params {
 		param("build.prefix", "4")
 	}
 
