@@ -6,6 +6,8 @@ fi
 
 yarn run build
 
+cp README.md ./editing-toolkit-plugin/
+
 # Update plugin version in the plugin file and readme.txt.
 sed -i -e "/^\s\* Version:/c\ * Version: $BUILD_NUMBER" -e "/^define( 'A8C_ETK_PLUGIN_VERSION'/c\define( 'A8C_ETK_PLUGIN_VERSION', '$BUILD_NUMBER' );" ./editing-toolkit-plugin/full-site-editing-plugin.php
 sed -i -e "/^Stable tag:\s/c\Stable tag: $BUILD_NUMBER" ./editing-toolkit-plugin/readme.txt

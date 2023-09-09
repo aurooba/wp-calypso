@@ -77,6 +77,7 @@ object CalypsoApps: BuildType({
 	artifactRules = """
 		apps/happy-blocks/release-files => happy-blocks.zip
 		apps/notifications/dist => notifications.zip
+		apps/editing-toolkit/editing-toolkit-plugin => editing-toolkit.zip
 	""".trimIndent()
 
 	steps {
@@ -87,10 +88,8 @@ object CalypsoApps: BuildType({
 			scriptContent = """
 				set -x
 
-				# Update composer
-				composer install
-
 				# Install dependencies
+				composer install
 				yarn
 			"""
 		}
@@ -100,7 +99,7 @@ object CalypsoApps: BuildType({
 			scriptContent = """
 				# Run `yarn build-ci` script for the plugins specified in the glob.
 				# `build-ci` is a specialized build for CI environment.
-				yarn workspaces foreach --verbose --parallel --include '{happy-blocks,@automattic/notifications}' run build-ci
+				yarn workspaces foreach --verbose --parallel --include '{happy-blocks,@automattic/notifications,editing-toolkit,@automattic/wpcom-editing-toolkit}' run build-ci
 			"""
 		}
 

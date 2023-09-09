@@ -1,17 +1,30 @@
 import { exec as _exec } from 'node:child_process';
 import { createWriteStream } from 'node:fs';
+import path from 'node:path';
 import { Readable } from 'node:stream';
 import { finished } from 'node:stream/promises';
 import util from 'node:util';
-const exec = util.promisify( _exec );
+const promiseExec = util.promisify( _exec );
 
-export default async function didCalypsoAppChange( { slug, dir, newReleaseDir, customNormalize } ) {
+const exec = async ( cmd, opts ) => {
+	return promiseExec( cmd, {
+		encoding: 'UTF-8',
+		stdio: 'inherit',
+		...opts,
+	} );
+};
+
+export default async function didCalypsoAppChange( { slug, dir, newReleaseDir, normalizeFiles } ) {
 	await downloadPrevBuild( slug, dir );
-	await customNormalize?.();
+
+	if ( normalizeFiles ) {
+		await exec( normalizeFiles, { cwd: path.join( dir, 'prev-release' ) } );
+	}
+
 	try {
 		await exec(
 			`diff -rq --exclude="*.js.map" --exclude="*.asset.php" --exclude="build_meta.json" --exclude="README.md" ${ newReleaseDir } ${ dir }/prev-release/`,
-			{ encoding: 'UTF-8', cwd: dir, stdio: 'inherit' }
+			{ cwd: dir }
 		);
 		return false;
 	} catch ( { code, stdout, stderr } ) {
@@ -38,8 +51,5 @@ async function downloadPrevBuild( appSlug, dir ) {
 
 	console.info( `Extracting downloaded archive for ${ appSlug }...` );
 	await finished( Readable.fromWeb( body ).pipe( stream ) );
-	await exec( `unzip -q ${ prevBuildZip } -d ${ dir }/prev-release`, {
-		encoding: 'UTF-8',
-		stdio: 'inherit',
-	} );
+	await exec( `unzip -q ${ prevBuildZip } -d ${ dir }/prev-release` );
 }

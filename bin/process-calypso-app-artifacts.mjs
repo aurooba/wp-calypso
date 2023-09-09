@@ -8,6 +8,7 @@ import didCalypsoAppChange from './did-calypso-app-change.mjs';
 checkEnvVars();
 
 const exec = util.promisify( _exec );
+const BUILD_NUMBER = process.env.BUILD_NUMBER;
 const SKIP_BUILD_DIFF = process.env.skip_build_diff === 'true';
 const IS_DEFAULT_BRANCH = process.env.is_default_branch === 'true';
 const dirname = fileURLToPath( new URL( '.', import.meta.url ) );
@@ -19,6 +20,12 @@ const apps = [
 		dir: path.resolve( appRoot, 'happy-blocks' ),
 		newReleaseDir: path.resolve( appRoot, 'happy-blocks/release-files' ),
 		slackNotify: true,
+	},
+	{
+		slug: 'editing-toolkit',
+		dir: path.resolve( appRoot, 'editing-toolkit' ),
+		newReleaseDir: path.resolve( appRoot, 'editing-toolkit/editing-toolkit-plugin' ),
+		normalizeFiles: `sed -i -e "/^\\s\\* Version:/c\\ * Version: ${ BUILD_NUMBER }" -e "/^define( 'A8C_ETK_PLUGIN_VERSION'/c\\define( 'A8C_ETK_PLUGIN_VERSION', '${ BUILD_NUMBER }' );" ./full-site-editing-plugin.php && sed -i -e "/^Stable tag:\\s/c\\Stable tag: ${ BUILD_NUMBER }" ./readme.txt\n`,
 	},
 ];
 
