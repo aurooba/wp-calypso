@@ -33,6 +33,11 @@ export const STEPS = {
 
 	ERROR: { slug: 'error', asyncComponent: () => import( './steps-repository/error-step' ) },
 
+	FREE_SETUP: {
+		slug: 'freeSetup',
+		asyncComponent: () => import( './steps-repository/free-setup' ),
+	},
+
 	GOALS: { slug: 'goals', asyncComponent: () => import( './steps-repository/goals' ) },
 
 	IMPORT: { slug: 'import', asyncComponent: () => import( './steps-repository/import' ) },
@@ -97,6 +102,8 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/intent-step' ),
 	},
 
+	LAUNCHPAD: { slug: 'launchpad', asyncComponent: () => import( './steps-repository/launchpad' ) },
+
 	MIGRATION_TRAIL: {
 		slug: 'migrationTrial',
 		asyncComponent: () => import( './steps-repository/migration-trial' ),
@@ -115,6 +122,11 @@ export const STEPS = {
 	PROCESSING: {
 		slug: 'processing',
 		asyncComponent: () => import( './steps-repository/processing-step' ),
+	},
+
+	SITE_CREATION_STEP: {
+		slug: 'siteCreationStep',
+		asyncComponent: () => import( './steps-repository/site-creation-step' ),
 	},
 
 	STORE_ADDRESS: {
