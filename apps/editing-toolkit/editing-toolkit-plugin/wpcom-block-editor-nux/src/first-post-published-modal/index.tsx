@@ -40,7 +40,6 @@ const FirstPostPublishedModal: React.FC = () => {
 	const closeModal = () => setIsOpen( false );
 
 	const { siteUrlOption, launchpadScreenOption, siteIntentOption } = window?.launchpadOptions || {};
-
 	let siteUrl = '';
 	if ( isURL( siteUrlOption ) ) {
 		// https://mysite.wordpress.com/path becomes mysite.wordpress.com
@@ -54,6 +53,7 @@ const FirstPostPublishedModal: React.FC = () => {
 			shouldShowFirstPostPublishedModal &&
 			! previousIsCurrentPostPublished.current &&
 			isCurrentPostPublished &&
+			launchpadScreenOption !== 'full' &&
 			postType === 'post'
 		) {
 			previousIsCurrentPostPublished.current = isCurrentPostPublished;
