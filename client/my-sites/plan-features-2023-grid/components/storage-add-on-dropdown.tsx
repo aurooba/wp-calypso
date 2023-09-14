@@ -11,13 +11,11 @@ type StorageAddOnDropdownProps = {
 	label?: string;
 	planSlug: PlanSlug;
 	storageOptions: StorageOption[];
-	showPrice?: boolean;
 };
 
 type StorageAddOnOptionProps = {
 	title: string;
 	price: string | undefined;
-	showPrice: boolean;
 };
 
 const getStorageOptionPrice = (
@@ -29,11 +27,11 @@ const getStorageOptionPrice = (
 	} )?.prices?.formattedMonthlyPrice;
 };
 
-const StorageAddOnOption = ( { title, price, showPrice }: StorageAddOnOptionProps ) => {
+const SelectedStorageOption = ( { title, price }: StorageAddOnOptionProps ) => {
 	const translate = useTranslate();
 	return (
 		<>
-			{ price && showPrice ? (
+			{ price ? (
 				<div>
 					<span className="storage-add-on-dropdown-option__title">{ title }</span>
 					<span className="storage-add-on-dropdown-option__price">
@@ -47,11 +45,31 @@ const StorageAddOnOption = ( { title, price, showPrice }: StorageAddOnOptionProp
 	);
 };
 
+const StorageAddOnOption = ( { title, price }: StorageAddOnOptionProps ) => {
+	const translate = useTranslate();
+	return (
+		<>
+			{ price ? (
+				<div>
+					<span className="storage-add-on-dropdown-option__title">{ title }</span>
+					<div className="storage-add-on-dropdown-option__price-container">
+						<span className="storage-add-on-dropdown-option__price">+&nbsp;{ price }</span>
+						<span className="storage-add-on-dropdown-option__per-month">
+							{ `/${ translate( 'month' ) }` }
+						</span>
+					</div>
+				</div>
+			) : (
+				<span className="storage-add-on-dropdown-option__title">{ title }</span>
+			) }
+		</>
+	);
+};
+
 export const StorageAddOnDropdown = ( {
 	label = '',
 	planSlug,
 	storageOptions,
-	showPrice = false,
 }: StorageAddOnDropdownProps ) => {
 	const { gridPlansIndex } = usePlansGridContext();
 	const { storageAddOnsForPlan } = gridPlansIndex[ planSlug ];
@@ -69,7 +87,7 @@ export const StorageAddOnDropdown = ( {
 		const price = getStorageOptionPrice( storageAddOnsForPlan, storageOption.slug );
 		return {
 			key: storageOption?.slug,
-			name: <StorageAddOnOption title={ title } price={ price } showPrice={ showPrice } />,
+			name: <StorageAddOnOption title={ title } price={ price } />,
 		};
 	} );
 
@@ -79,13 +97,7 @@ export const StorageAddOnDropdown = ( {
 	const selectedOptionTitle = getStorageStringFromFeature( selectedOptionKey ) || '';
 	const selectedOption = {
 		key: selectedOptionKey,
-		name: (
-			<StorageAddOnOption
-				title={ selectedOptionTitle }
-				price={ selectedOptionPrice }
-				showPrice={ showPrice }
-			/>
-		),
+		name: <SelectedStorageOption title={ selectedOptionTitle } price={ selectedOptionPrice } />,
 	};
 	return (
 		<CustomSelectControl
