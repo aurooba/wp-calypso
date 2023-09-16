@@ -33,7 +33,6 @@ import debugFactory from 'debug';
 import i18n, { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import MaterialIcon from 'calypso/components/material-icon';
-import Notice from 'calypso/components/notice';
 import {
 	hasGoogleApps,
 	hasDomainRegistration,
@@ -398,9 +397,6 @@ export default function WPCheckout( {
 	return (
 		<WPCheckoutWrapper>
 			<WPCheckoutSidebarContent>
-				<Notice status="is-error" icon="notice" showDismiss={ false } isLoading={ true }>
-					Please fill out all payment related fieldss
-				</Notice>
 				{ isLoading && <LoadingSidebarContent /> }
 				{ formStatus === FormStatus.SUBMITTING && <CheckoutSlowProcessingNotice /> }
 				{ ! isLoading && (
