@@ -75,6 +75,7 @@ export interface PlanFeatures2023GridProps {
 	isLaunchPage?: boolean | null;
 	isReskinned?: boolean;
 	onUpgradeClick?: ( cartItem?: MinimalRequestCartProduct | null ) => void;
+	onStorageAddOnClick?: () => void;
 	flowName?: string | null;
 	paidDomainName?: string;
 	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >; // used to show a wpcom free domain in the Free plan column when a paid domain is picked.
@@ -637,7 +638,14 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 	}
 
 	renderPlanStorageOptions( renderedGridPlans: GridPlan[], options?: PlanRowOptions ) {
-		const { translate, intervalType, isInSignup, flowName, showUpgradeableStorage } = this.props;
+		const {
+			translate,
+			intervalType,
+			isInSignup,
+			flowName,
+			onStorageAddOnClick,
+			showUpgradeableStorage,
+		} = this.props;
 
 		return renderedGridPlans.map( ( { planSlug, features: { storageOptions } } ) => {
 			if ( ! options?.isTableCell && isWpcomEnterpriseGridPlan( planSlug ) ) {
@@ -664,6 +672,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 				<StorageAddOnDropdown
 					label={ translate( 'Storage' ) }
 					planSlug={ planSlug }
+					onStorageAddOnClick={ onStorageAddOnClick }
 					storageOptions={ storageOptions }
 					showPrice
 				/>
@@ -720,6 +729,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			toggleShowPlansComparisonGrid,
 			showPlansComparisonGrid,
 			showUpgradeableStorage,
+			onStorageAddOnClick,
 		} = this.props;
 
 		return (
@@ -791,6 +801,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 								selectedFeature={ selectedFeature }
 								showLegacyStorageFeature={ showLegacyStorageFeature }
 								showUpgradeableStorage={ showUpgradeableStorage }
+								onStorageAddOnClick={ onStorageAddOnClick }
 							/>
 							<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
 								<Button onClick={ toggleShowPlansComparisonGrid }>

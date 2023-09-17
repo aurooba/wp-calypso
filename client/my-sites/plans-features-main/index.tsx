@@ -700,6 +700,9 @@ const PlansFeaturesMain = ( {
 							toggleShowPlansComparisonGrid={ toggleShowPlansComparisonGrid }
 							planTypeSelectorProps={ planTypeSelectorProps }
 							ref={ plansComparisonGridRef }
+							onStorageAddOnClick={ () => {
+								recordTracksEvent( 'calypso_plans_page_storage_add_on_click' );
+							} }
 						/>
 					</div>
 				</>
