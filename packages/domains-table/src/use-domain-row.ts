@@ -110,6 +110,20 @@ export const useDomainRow = ( domain: PartialDomainData ) => {
 
 	const isSelected = selectedDomains.has( getDomainId( domain ) );
 
+	const domainStatus = currentDomainData
+		? resolveDomainStatus( currentDomainData, {
+				siteSlug: siteSlug,
+				translate,
+				getMappingErrors: true,
+				currentRoute: window.location.pathname,
+				isPurchasedDomain: domainStatusPurchaseActions?.isPurchasedDomain?.( currentDomainData ),
+				isCreditCardExpiring:
+					domainStatusPurchaseActions?.isCreditCardExpiring?.( currentDomainData ),
+				onRenewNowClick: () =>
+					domainStatusPurchaseActions?.onRenewNowClick?.( siteSlug ?? '', currentDomainData ),
+		  } )
+		: null;
+
 	return {
 		ref,
 		site,
@@ -126,6 +140,7 @@ export const useDomainRow = ( domain: PartialDomainData ) => {
 		isSelected,
 		handleSelectDomain,
 		isAllSitesView,
+		domainStatus,
 		domainStatusPurchaseActions,
 		pendingUpdates: domainResults.get( domain.domain ) || [],
 		currentDomainData,

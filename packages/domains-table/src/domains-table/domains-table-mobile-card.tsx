@@ -6,11 +6,11 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { PrimaryDomainLabel } from '../primary-domain-label/index';
 import { useDomainRow } from '../use-domain-row';
-import { ResponseDomain } from '../utils/types';
 import { DomainsTableEmailIndicator } from './domains-table-email-indicator';
 import { DomainsTableExpiresRewnewsOnCell } from './domains-table-expires-renew-cell';
 import { DomainsTableRowActions } from './domains-table-row-actions';
 import { DomainsTableStatusCell } from './domains-table-status-cell';
+import { DomainsTableStatusCTA } from './domains-table-status-cta';
 
 type Props = {
 	domain: PartialDomainData;
@@ -26,7 +26,7 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 		currentDomainData,
 		isSelected,
 		handleSelectDomain,
-		domainStatusPurchaseActions,
+		domainStatus,
 		pendingUpdates,
 		shouldDisplayPrimaryDomainLabel,
 		showBulkActions,
@@ -90,12 +90,15 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 				{ ! currentDomainData || isLoadingSiteDomainsDetails ? (
 					<LoadingPlaceholder style={ { width: '30%' } } />
 				) : (
-					<DomainsTableStatusCell
-						siteSlug={ siteSlug }
-						currentDomainData={ currentDomainData as ResponseDomain }
-						domainStatusPurchaseActions={ domainStatusPurchaseActions }
-						pendingUpdates={ pendingUpdates }
-					/>
+					<div className="domains-table-mobile-card-status">
+						<DomainsTableStatusCell
+							domainStatus={ domainStatus }
+							pendingUpdates={ pendingUpdates }
+						/>
+						{ domainStatus?.callToAction && (
+							<DomainsTableStatusCTA callToAction={ domainStatus.callToAction } />
+						) }
+					</div>
 				) }
 			</div>
 		</div>

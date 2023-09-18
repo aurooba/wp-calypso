@@ -63,6 +63,11 @@ export const allSitesViewColumns: DomainsTableColumn[] = [
 		supportsOrderSwitching: true,
 		sortFunctions: [],
 	},
+	{
+		name: 'status_action',
+		label: null,
+		isSortable: false,
+	},
 	{ name: 'action', label: null, className: 'domains-table__action-ellipsis-column-header' },
 ];
 
@@ -105,6 +110,11 @@ export const siteSpecificViewColumns: DomainsTableColumn[] = [
 		initialSortDirection: 'desc',
 		supportsOrderSwitching: true,
 		sortFunctions: [],
+	},
+	{
+		name: 'status_action',
+		label: null,
+		isSortable: false,
 	},
 	{ name: 'action', label: null, className: 'domains-table__action-ellipsis-column-header' },
 ];
