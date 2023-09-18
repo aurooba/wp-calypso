@@ -17,6 +17,7 @@ import { useSelector } from 'calypso/state';
 import { canAccessWordAds, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import AdsWrapper from './ads/wrapper';
+import CustomerSection from './customers';
 import Home from './home';
 import MembershipsSection from './memberships';
 import MembershipsProductsSection from './memberships/products';
@@ -51,6 +52,11 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 				title: translate( 'Tools' ),
 				path: '/earn' + pathSuffix,
 				id: 'earn',
+			},
+			{
+				title: translate( 'Customers' ),
+				path: '/earn/customers' + pathSuffix,
+				id: 'customers',
 			},
 			{
 				title: translate( 'Settings' ),
@@ -131,6 +137,9 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 				return <MembershipsSection query={ query } />;
 			case 'payments-plans':
 				return <MembershipsProductsSection />;
+
+			case 'customers':
+				return <CustomerSection />;
 
 			case 'refer-a-friend':
 				return <ReferAFriendSection />;
