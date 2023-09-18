@@ -8,6 +8,8 @@ import { countDomainsRequiringAttention } from './utils';
 import { createSiteDomainObject } from './utils/assembler';
 import { resolveDomainStatus } from './utils/resolve-domain-status';
 
+const notNull = < T >( x: T ): x is Exclude< T, null > => x !== null;
+
 export const useDomainRow = ( domain: PartialDomainData ) => {
 	const {
 		hideOwnerColumn,
@@ -65,8 +67,8 @@ export const useDomainRow = ( domain: PartialDomainData ) => {
 		if ( ! currentDomainData || isLoadingRowDetails ) {
 			return null;
 		}
-		return countDomainsRequiringAttention(
-			allSiteDomains?.map( ( domain ) =>
+		const domains = allSiteDomains
+			?.map( ( domain ) =>
 				resolveDomainStatus( domain, {
 					siteSlug: siteSlug,
 					getMappingErrors: true,
@@ -76,7 +78,9 @@ export const useDomainRow = ( domain: PartialDomainData ) => {
 						domainStatusPurchaseActions?.isCreditCardExpiring?.( currentDomainData ),
 				} )
 			)
-		);
+			.filter( notNull );
+
+		return countDomainsRequiringAttention( domains ?? [] );
 	}, [
 		allSiteDomains,
 		currentDomainData,
