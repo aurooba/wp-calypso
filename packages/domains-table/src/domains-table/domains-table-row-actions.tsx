@@ -41,7 +41,7 @@ export const DomainsTableRowActions = ( {
 	canSetPrimaryDomainForSite,
 	isSiteOnFreePlan,
 }: DomainsTableRowActionsProps ) => {
-	const { onDomainAction, userCanSetPrimaryDomains = false } = useDomainsTable();
+	const { onDomainAction, userCanSetPrimaryDomains = false, updatingDomain } = useDomainsTable();
 	const { __ } = useI18n();
 
 	const canViewDetails = domain.type !== domainTypes.WPCOM;
@@ -95,6 +95,7 @@ export const DomainsTableRowActions = ( {
 						onDomainAction?.( 'set-primary-address', domain );
 						onClose?.();
 					} }
+					disabled={ updatingDomain?.action === 'set-primary-address' }
 				>
 					{ __( 'Make primary site address' ) }
 				</MenuItemLink>
