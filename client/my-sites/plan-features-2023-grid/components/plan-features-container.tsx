@@ -15,7 +15,6 @@ const PlanFeaturesContainer: React.FC< {
 	translate: LocalizeProps[ 'translate' ];
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
 	selectedFeature?: string;
-	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >; // indicate when a custom domain is allowed to be used with the Free plan.
 	isTableCell: boolean | undefined;
 } > = ( {
 	plansWithFeatures,
@@ -24,7 +23,6 @@ const PlanFeaturesContainer: React.FC< {
 	translate,
 	hideUnavailableFeatures,
 	selectedFeature,
-	isCustomDomainAllowedOnFreePlan,
 	isTableCell,
 } ) => {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
@@ -44,7 +42,6 @@ const PlanFeaturesContainer: React.FC< {
 						wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
 						hideUnavailableFeatures={ hideUnavailableFeatures }
 						selectedFeature={ selectedFeature }
-						isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 						setActiveTooltipId={ setActiveTooltipId }
 						activeTooltipId={ activeTooltipId }
 					/>
@@ -68,7 +65,6 @@ const PlanFeaturesContainer: React.FC< {
 						paidDomainName={ paidDomainName }
 						wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
 						hideUnavailableFeatures={ hideUnavailableFeatures }
-						isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 						setActiveTooltipId={ setActiveTooltipId }
 						activeTooltipId={ activeTooltipId }
 					/>

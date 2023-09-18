@@ -9,6 +9,7 @@ import {
 	PlanSlug,
 	PLAN_PERSONAL,
 	PRODUCT_1GB_SPACE,
+	PLAN_FREE,
 } from '@automattic/calypso-products';
 import { Button, Spinner } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
@@ -43,13 +44,12 @@ import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-f
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
 import useAddOns from '../add-ons/hooks/use-add-ons';
-import { FreePlanFreeDomainDialog } from './components/free-plan-free-domain-dialog';
-import { FreePlanPaidDomainDialog } from './components/free-plan-paid-domain-dialog';
 import { LoadingPlaceHolder } from './components/loading-placeholder';
+import ModalContainer from './components/plan-upsell-modal';
+import { useProgressBlockingModal } from './components/plan-upsell-modal/use-progress-blocking-model';
 import usePricedAPIPlans from './hooks/data-store/use-priced-api-plans';
 import usePricingMetaForGridPlans from './hooks/data-store/use-pricing-meta-for-grid-plans';
 import useFilterPlansForPlanFeatures from './hooks/use-filter-plans-for-plan-features';
-import useIsCustomDomainAllowedOnFreePlan from './hooks/use-is-custom-domain-allowed-on-free-plan';
 import useIsPlanUpsellEnabledOnFreeDomain from './hooks/use-is-plan-upsell-enabled-on-free-domain';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
@@ -212,8 +212,10 @@ const PlansFeaturesMain = ( {
 	showLegacyStorageFeature = false,
 	isSpotlightOnCurrentPlan,
 }: PlansFeaturesMainProps ) => {
-	const [ isFreePlanPaidDomainDialogOpen, setIsFreePlanPaidDomainDialogOpen ] = useState( false );
-	const [ isFreePlanFreeDomainDialogOpen, setIsFreePlanFreeDomainDialogOpen ] = useState( false );
+	const [ isModalOpen, setIsModalOpen ] = useState( false );
+	const [ lastClickedPlan, setLastClickedPlan ] = useState< PlanSlug | null >( null );
+	const { resolveDisplayedModal } = useProgressBlockingModal( { paidDomainName } );
+
 	const [ showPlansComparisonGrid, setShowPlansComparisonGrid ] = useState( false );
 	const [ masterbarHeight, setMasterbarHeight ] = useState( 0 );
 	const translate = useTranslate();
@@ -233,10 +235,7 @@ const PlansFeaturesMain = ( {
 		( state: IAppState ) => siteId && canUpgradeToPlan( state, siteId, PLAN_PERSONAL )
 	);
 	const previousRoute = useSelector( ( state: IAppState ) => getPreviousRoute( state ) );
-	const isCustomDomainAllowedOnFreePlan = useIsCustomDomainAllowedOnFreePlan(
-		flowName,
-		!! paidDomainName
-	);
+
 	const isPlanUpsellEnabledOnFreeDomain = useIsPlanUpsellEnabledOnFreeDomain(
 		flowName,
 		!! paidDomainName
@@ -281,24 +280,14 @@ const PlansFeaturesMain = ( {
 		return false;
 	};
 
-	const toggleIsFreePlanPaidDomainDialogOpen = () => {
-		setIsFreePlanPaidDomainDialogOpen( ! isFreePlanPaidDomainDialogOpen );
-	};
-
 	const handleUpgradeClick = ( cartItemForPlan?: { product_slug: string } | null ) => {
-		// `cartItemForPlan` is empty if Free plan is selected. Show `FreePlanPaidDomainDialog`
-		// in that case and exit. `FreePlanPaidDomainDialog` takes over from there.
-		// It only applies to main onboarding flow and the paid media flow at the moment.
-		// Standardizing it or not is TBD; see Automattic/growth-foundations#63 and pdgrnI-2nV-p2#comment-4110 for relevant discussion.
-		if ( ! cartItemForPlan ) {
+		const selectedPlanSlug = ( cartItemForPlan?.product_slug as PlanSlug ) ?? PLAN_FREE;
+		setLastClickedPlan( selectedPlanSlug );
+		if ( selectedPlanSlug === PLAN_FREE ) {
 			recordTracksEvent( 'calypso_signup_free_plan_click' );
-			if ( paidDomainName ) {
-				toggleIsFreePlanPaidDomainDialogOpen();
-				return;
-			}
-			if ( isPlanUpsellEnabledOnFreeDomain.result ) {
-				setIsFreePlanFreeDomainDialogOpen( true );
-				return;
+			const shouldDisplayModal = resolveDisplayedModal( selectedPlanSlug ) !== null;
+			if ( shouldDisplayModal ) {
+				setIsModalOpen( true );
 			}
 		}
 
@@ -554,51 +543,29 @@ const PlansFeaturesMain = ( {
 			<QueryPlans />
 			<QuerySites siteId={ siteId } />
 			<QuerySitePlans siteId={ siteId } />
-			{ paidDomainName && isFreePlanPaidDomainDialogOpen && (
-				<FreePlanPaidDomainDialog
-					paidDomainName={ paidDomainName }
-					wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
-					suggestedPlanSlug={ PLAN_PERSONAL }
-					isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
-					onClose={ toggleIsFreePlanPaidDomainDialogOpen }
-					onFreePlanSelected={ () => {
-						if ( isCustomDomainAllowedOnFreePlan.isLoading ) {
-							return;
-						}
 
-						if ( ! isCustomDomainAllowedOnFreePlan.result ) {
-							removePaidDomain?.();
-						}
+			{ lastClickedPlan && flowName && (
+				<ModalContainer
+					isModalOpen={ isModalOpen }
+					paidDomainName={ paidDomainName }
+					selectedPlan={ lastClickedPlan }
+					wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
+					flowName={ flowName }
+					onClose={ () => setIsModalOpen( false ) }
+					onFreePlanSelected={ () => {
+						removePaidDomain?.();
 						// Since this domain will not be available after it is selected, invalidate the cache.
 						invalidateDomainSuggestionCache();
 						wpcomFreeDomainSuggestion.result &&
 							setSiteUrlAsFreeDomainSuggestion?.( wpcomFreeDomainSuggestion.result );
 						onUpgradeClick?.( null );
 					} }
-					onPlanSelected={ () => {
-						const cartItemForPlan = getCartItemForPlan( PLAN_PERSONAL );
-						onUpgradeClick?.( cartItemForPlan );
-					} }
-				/>
-			) }
-			{ isFreePlanFreeDomainDialogOpen && (
-				<FreePlanFreeDomainDialog
-					suggestedPlanSlug={ PLAN_PERSONAL }
-					freeSubdomain={ resolvedSubdomainName }
-					onClose={ () => setIsFreePlanFreeDomainDialogOpen( false ) }
-					onFreePlanSelected={ () => {
+					onPlanSelected={ ( planSlug ) => {
 						if ( ! signupFlowSubdomain && wpcomFreeDomainSuggestion.result ) {
 							setSiteUrlAsFreeDomainSuggestion?.( wpcomFreeDomainSuggestion.result );
 						}
 						invalidateDomainSuggestionCache();
-						onUpgradeClick?.( null );
-					} }
-					onPlanSelected={ () => {
-						if ( ! signupFlowSubdomain && wpcomFreeDomainSuggestion.result ) {
-							setSiteUrlAsFreeDomainSuggestion?.( wpcomFreeDomainSuggestion.result );
-						}
-						invalidateDomainSuggestionCache();
-						const cartItemForPlan = getCartItemForPlan( PLAN_PERSONAL );
+						const cartItemForPlan = getCartItemForPlan( planSlug );
 						onUpgradeClick?.( cartItemForPlan );
 					} }
 				/>
@@ -667,7 +634,6 @@ const PlansFeaturesMain = ( {
 							gridPlanForSpotlight={ gridPlanForSpotlight }
 							paidDomainName={ paidDomainName }
 							wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
-							isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 							isInSignup={ isInSignup }
 							isLaunchPage={ isLaunchPage }
 							onUpgradeClick={ handleUpgradeClick }

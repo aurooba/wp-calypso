@@ -1,5 +1,6 @@
 import { domainProductSlugs, getPlan, PlanSlug } from '@automattic/calypso-products';
 import { Button, Dialog, Gridicon } from '@automattic/components';
+import { DomainSuggestions } from '@automattic/data-stores';
 import formatCurrency from '@automattic/format-currency';
 import { css, Global } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -12,8 +13,8 @@ import usePlanPrices from 'calypso/my-sites/plans/hooks/use-plan-prices';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
+import { LoadingPlaceHolder } from '../loading-placeholder';
 import { DialogContainer, MODAL_VIEW_EVENT_NAME } from './free-plan-paid-domain-dialog';
-import { LoadingPlaceHolder } from './loading-placeholder';
 import type { TranslateResult } from 'i18n-calypso';
 
 export const Heading = styled.div`
@@ -137,7 +138,7 @@ export function FreePlanFreeDomainDialog( {
 	onClose,
 	suggestedPlanSlug,
 }: {
-	freeSubdomain: DataResponse< string >;
+	freeSubdomain: DataResponse< DomainSuggestions.DomainSuggestion >;
 	onClose: () => void;
 	onFreePlanSelected: () => void;
 	onPlanSelected: () => void;
@@ -207,7 +208,7 @@ export function FreePlanFreeDomainDialog( {
 										strong: <strong></strong>,
 										subdomain: (
 											<LazyDisplayText
-												displayText={ freeSubdomain?.result }
+												displayText={ freeSubdomain?.result?.domain_name }
 												isLoading={ freeSubdomain?.isLoading }
 											/>
 										),

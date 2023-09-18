@@ -26,29 +26,21 @@ const SubdomainSuggestion = styled.div`
 const FreePlanCustomDomainFeature: React.FC< {
 	paidDomainName: string;
 	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >;
-	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >;
-} > = ( { paidDomainName, wpcomFreeDomainSuggestion, isCustomDomainAllowedOnFreePlan } ) => {
+} > = ( { paidDomainName, wpcomFreeDomainSuggestion } ) => {
 	const translate = useTranslate();
-	const isLoading =
-		wpcomFreeDomainSuggestion.isLoading || isCustomDomainAllowedOnFreePlan.isLoading;
+	const isLoading = wpcomFreeDomainSuggestion.isLoading;
 
 	return (
 		<SubdomainSuggestion>
 			{ isLoading && <LoadingPlaceHolder /> }
-			{ ! isLoading &&
-				( isCustomDomainAllowedOnFreePlan.result ? (
-					<div>
-						{ translate( '%s will be a redirect', {
-							args: [ paidDomainName ],
-							comment: '%s is a domain name.',
-						} ) }
-					</div>
-				) : (
-					<>
-						<div className="is-domain-name">{ paidDomainName }</div>
-						<div>{ wpcomFreeDomainSuggestion.result?.domain_name }</div>
-					</>
-				) ) }
+			{ ! isLoading && (
+				<div>
+					{ translate( '%s will be a redirect', {
+						args: [ paidDomainName ],
+						comment: '%s is a domain name.',
+					} ) }
+				</div>
+			) }
 		</SubdomainSuggestion>
 	);
 };
@@ -60,7 +52,6 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >;
 	hideUnavailableFeatures?: boolean;
 	selectedFeature?: string;
-	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >;
 	activeTooltipId: string;
 	setActiveTooltipId: Dispatch< SetStateAction< string > >;
 } > = ( {
@@ -70,7 +61,6 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	wpcomFreeDomainSuggestion,
 	hideUnavailableFeatures,
 	selectedFeature,
-	isCustomDomainAllowedOnFreePlan,
 	activeTooltipId,
 	setActiveTooltipId,
 } ) => {
@@ -129,7 +119,6 @@ const PlanFeatures2023GridFeatures: React.FC< {
 												key={ key }
 												paidDomainName={ paidDomainName as string }
 												wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
-												isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 											/>
 										</Plans2023Tooltip>
 									) : (

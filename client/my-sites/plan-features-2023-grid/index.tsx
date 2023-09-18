@@ -88,7 +88,6 @@ export interface PlanFeatures2023GridProps {
 	// Value of the `?feature=` query param, so we can highlight a given feature and hide plans without it.
 	selectedFeature?: string;
 	intent?: PlansIntent;
-	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >; // indicate when a custom domain is allowed to be used with the Free plan.
 	showLegacyStorageFeature?: boolean;
 	showUpgradeableStorage: boolean; // feature flag used to show the storage add-on dropdown
 	stickyRowOffset: number;
@@ -614,7 +613,6 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			hideUnavailableFeatures,
 			selectedFeature,
 			wpcomFreeDomainSuggestion,
-			isCustomDomainAllowedOnFreePlan,
 		} = this.props;
 		const plansWithFeatures = renderedGridPlans.filter(
 			( gridPlan ) =>
@@ -630,7 +628,6 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 				translate={ translate }
 				hideUnavailableFeatures={ hideUnavailableFeatures }
 				selectedFeature={ selectedFeature }
-				isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 				isTableCell={ options?.isTableCell }
 			/>
 		);
