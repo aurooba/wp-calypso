@@ -18,7 +18,7 @@ import { shouldUpgradeToMakeDomainPrimary } from '../utils/should-upgrade-to-mak
 import { ResponseDomain } from '../utils/types';
 import { useDomainsTable } from './domains-table';
 
-export type DomainAction = 'manage-dns-settings' | 'set-primary';
+export type DomainAction = 'manage-dns-settings' | 'set-primary-address';
 
 interface MenuItemLinkProps extends Omit< React.ComponentProps< typeof MenuItem >, 'href' > {
 	href?: string;
@@ -92,7 +92,7 @@ export const DomainsTableRowActions = ( {
 			canMakePrimarySiteAddress && (
 				<MenuItemLink
 					onClick={ () => {
-						onDomainAction?.( 'set-primary', domain );
+						onDomainAction?.( 'set-primary-address', domain );
 						onClose?.();
 					} }
 				>
